@@ -54,30 +54,52 @@ function buttonClick(button) {
 
     let buttonIsNumber = isNumber(buttonPressed);
     let buttonIsOperator = isOperator(buttonPressed);
-    let screenIsEmpty = isScreenEmpty(displayScreen.textContent);
+    let screenIsEmpty = isScreenEmpty();
 
+    if(validInput(buttonPressed)) {
 
     //handle pressing button on empty screen.
-    if (buttonIsNumber && screenIsEmpty) {
-        displayScreen.textContent = buttonPressed;
-    }
+        if (buttonIsNumber && screenIsEmpty) {
+            displayScreen.textContent = buttonPressed;
+        }
 
-    if (!buttonIsNumber && screenIsEmpty) {
-        displayScreen.textContent = "0" + buttonPressed;
-    }
+        if (!buttonIsNumber && screenIsEmpty) {
+            displayScreen.textContent = "0" + buttonPressed;
+        }
 
-    if (buttonPressed == "=" && screenIsEmpty) {
-        displayScreen.textContent = "0";
-    }
+        if (buttonPressed == "=" && screenIsEmpty) {
+            displayScreen.textContent = "0";
+        }
 
-    if (buttonPressed == "DEL" && screenIsEmpty) {
-        displayScreen.textContent = "0";
-    }
+        if (buttonPressed == "DEL" && screenIsEmpty) {
+            displayScreen.textContent = "0";
+        }
 
-    if (buttonPressed == "." && screenIsEmpty) {
-        displayScreen.textContent = buttonPressed;
-    }
+        if (buttonPressed == "." && screenIsEmpty) {
+            displayScreen.textContent = buttonPressed;
+        }
 
+
+
+
+        
+
+
+    //handle screen has numbers / operators pressed already
+        if (buttonIsNumber && !screenIsEmpty) {
+            displayScreen.textContent = displayScreen.textContent + buttonPressed;
+        }
+
+        if (buttonIsOperator && !screenIsEmpty) {
+            displayScreen.textContent = displayScreen.textContent + buttonPressed;
+        }
+
+        if (buttonPressed == "DEL" && !screenIsEmpty) {
+            displayScreen.textContent = displayScreen.textContent.slice(0, -1);
+        }
+
+
+    } else {displayScreen.textContent = "ERROR";} // if check for valid input failed.
 }
 
 function isNumber(buttonPressed) {
@@ -100,36 +122,41 @@ function isOperator(buttonPressed) {
         buttonPressed == "+" ||
         buttonPressed == "-" ||
         buttonPressed == "x" ||
-        buttonPressed == "/" ||
-        buttonPressed == "DEL") {
+        buttonPressed == "/") 
+        {
             return true;
         } else {return false;}
 }
 
-function isScreenEmpty(screenText) {
+function isScreenEmpty() {
     if(displayScreen.textContent == "" || displayScreen.textContent == "0" || displayScreen.textContent == "ERROR") {
         return true;
     } else {return false;}
 }
 
 function validInput(buttonPressed) {
-    //we assume screen isn't empty here.
+    //input always made valid if the screen is empty.
 
-    let lastButtonPressed = displayScreen.textContent.charAt(displayScreen.textContent.length - 1);
-
-    if (isOperator(lastButtonPressed) && isOperator(buttonPressed)) {return false;} // cant have two operators beside each other
-
-    if (lastButtonPressed == "." && buttonPressed == ".") {return false;} // cant have two decimals beside each other.
-
-
-    //stop dividing by 0!!!!
-    if(displayScreen.textContent.length >= 2 ) {
-        let secondLastButtonPressed = displayScreen.textContent.charAt(displayScreen.textContent.length - 2);
-
-        if (lastButtonPressed == "0" && secondLastButtonPressed == "/" && buttonPressed == "=") {
-            return false;
+    if(!isScreenEmpty()) {
+        let lastButtonPressed = displayScreen.textContent.charAt(displayScreen.textContent.length - 1);
+        console.log(lastButtonPressed);
+        console.log(buttonPressed);
+    
+        if (isOperator(lastButtonPressed) && isOperator(buttonPressed)) {return false;} // cant have two operators beside each other
+    
+        if (lastButtonPressed == "." && buttonPressed == ".") {return false;} // cant have two decimals beside each other.
+    
+    
+        //stop dividing by 0!!!!
+        if(displayScreen.textContent.length >= 2 ) {
+            let secondLastButtonPressed = displayScreen.textContent.charAt(displayScreen.textContent.length - 2);
+    
+            if (lastButtonPressed == "0" && secondLastButtonPressed == "/" && buttonPressed == "=") {
+                return false;
+            }
+    
         }
-
+    
     }
 
     return true;
