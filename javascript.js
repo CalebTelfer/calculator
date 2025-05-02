@@ -107,7 +107,30 @@ function isOperator(buttonPressed) {
 }
 
 function isScreenEmpty(screenText) {
-    if(displayScreen.textContent == "" || displayScreen.textContent == "0") {
+    if(displayScreen.textContent == "" || displayScreen.textContent == "0" || displayScreen.textContent == "ERROR") {
         return true;
     } else {return false;}
+}
+
+function validInput(buttonPressed) {
+    //we assume screen isn't empty here.
+
+    let lastButtonPressed = displayScreen.textContent.charAt(displayScreen.textContent.length - 1);
+
+    if (isOperator(lastButtonPressed) && isOperator(buttonPressed)) {return false;} // cant have two operators beside each other
+
+    if (lastButtonPressed == "." && buttonPressed == ".") {return false;} // cant have two decimals beside each other.
+
+
+    //stop dividing by 0!!!!
+    if(displayScreen.textContent.length >= 2 ) {
+        let secondLastButtonPressed = displayScreen.textContent.charAt(displayScreen.textContent.length - 2);
+
+        if (lastButtonPressed == "0" && secondLastButtonPressed == "/" && buttonPressed == "=") {
+            return false;
+        }
+
+    }
+
+    return true;
 }
