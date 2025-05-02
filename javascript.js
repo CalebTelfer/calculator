@@ -85,5 +85,7 @@ function isOperator(buttonPressed) {} {
 }
 
 function isScreenEmpty(screenText) {
-
+    if(displayScreen.textContent == "") {
+        return true;
+    } else {return false;}
 }
