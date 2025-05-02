@@ -56,6 +56,28 @@ function buttonClick(button) {
     let buttonIsOperator = isOperator(buttonPressed);
     let screenIsEmpty = isScreenEmpty(displayScreen.textContent);
 
+
+    //handle pressing button on empty screen.
+    if (buttonIsNumber && screenIsEmpty) {
+        displayScreen.textContent = buttonPressed;
+    }
+
+    if (!buttonIsNumber && screenIsEmpty) {
+        displayScreen.textContent = "0" + buttonPressed;
+    }
+
+    if (buttonPressed == "=" && screenIsEmpty) {
+        displayScreen.textContent = "0";
+    }
+
+    if (buttonPressed == "DEL" && screenIsEmpty) {
+        displayScreen.textContent = "0";
+    }
+
+    if (buttonPressed == "." && screenIsEmpty) {
+        displayScreen.textContent = buttonPressed;
+    }
+
 }
 
 function isNumber(buttonPressed) {
@@ -71,7 +93,7 @@ function isNumber(buttonPressed) {
         } else {return false;}
 }
 
-function isOperator(buttonPressed) {} {
+function isOperator(buttonPressed) {
     if(
         buttonPressed == "." || 
         buttonPressed == "=" || 
@@ -85,7 +107,7 @@ function isOperator(buttonPressed) {} {
 }
 
 function isScreenEmpty(screenText) {
-    if(displayScreen.textContent == "") {
+    if(displayScreen.textContent == "" || displayScreen.textContent == "0") {
         return true;
     } else {return false;}
 }
