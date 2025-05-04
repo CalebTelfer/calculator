@@ -63,7 +63,7 @@ function buttonClick(button) {
             displayScreen.textContent = buttonPressed;
         }
 
-        if (!buttonIsNumber && screenIsEmpty) {
+        if (buttonIsOperator && screenIsEmpty) {
             displayScreen.textContent = "0" + buttonPressed;
         }
 
@@ -90,13 +90,27 @@ function buttonClick(button) {
             displayScreen.textContent = displayScreen.textContent + buttonPressed;
         }
 
-        if (buttonIsOperator && !screenIsEmpty) {
+        if (buttonIsOperator && !screenIsEmpty && buttonPressed != "=") {
             displayScreen.textContent = displayScreen.textContent + buttonPressed;
         }
 
         if (buttonPressed == "DEL" && !screenIsEmpty) {
             displayScreen.textContent = displayScreen.textContent.slice(0, -1);
         }
+
+
+        if(buttonPressed == "=" && !screenIsEmpty) {
+            let equationArray = Array.from(displayScreen.textContent);
+            
+            //find operator positions for bedmas
+            let dividePositions = findOperatorIndexes(equationArray, "/");
+            let multiplyPositions = findOperatorIndexes(equationArray, "x");
+            let addPositions = findOperatorIndexes(equationArray, "+");
+            let subtractPositions = findOperatorIndexes(equationArray, "-");
+
+        }
+
+    
 
 
     } else {displayScreen.textContent = "ERROR";} // if check for valid input failed.
@@ -139,9 +153,7 @@ function validInput(buttonPressed) {
 
     if(!isScreenEmpty()) {
         let lastButtonPressed = displayScreen.textContent.charAt(displayScreen.textContent.length - 1);
-        console.log(lastButtonPressed);
-        console.log(buttonPressed);
-    
+
         if (isOperator(lastButtonPressed) && isOperator(buttonPressed)) {return false;} // cant have two operators beside each other
     
         if (lastButtonPressed == "." && buttonPressed == ".") {return false;} // cant have two decimals beside each other.
@@ -160,4 +172,14 @@ function validInput(buttonPressed) {
     }
 
     return true;
+}
+
+function findOperatorIndexes(equationArray, operatorRequested) {
+    return equationArray.reduce((operatorPos, currentItem, currentItemIndex) => {
+        if(currentItem == operatorRequested) {
+            operatorPos.push(currentItemIndex);
+        }
+        return operatorPos; //returns array of indexes in input array that has the operator requested
+    }, []);
+
 }
