@@ -1,31 +1,47 @@
-// 1. Create functions for addition, subtraction, multiplying, and dividing.
+function divideAndMultiple() {
 
-function add(x, y) {
-    return x + y;
-}
-
-function subtract(x, y) {
-    return x - y;
-}
-
-function multiplyEquation() {
     let equationArray = Array.from(displayScreen.textContent);
 
     let num1 = "";
     let num2 = "";
 
-    //collects left and right numbers on each side of EACH "x" operator, divides them, and inserts quotient back into equationArray.
-    while(equationArray.indexOf("x") != -1) {
+    //collects left and right numbers on each side of EACH operator, divides them, and inserts back into equationArray.
+    while(equationArray.indexOf("/") != -1 || equationArray.indexOf("x") != -1) {
 
         num1 = "";
         num2 = "";
-        let indexOfOperator = equationArray.indexOf("x");
+        let indexOfOperator;
+
+        let indexOfDivideOperator = equationArray.indexOf("/");
+        let indexOfMultiplyOperator = equationArray.indexOf("x");
+
+        let firstOperation = "";
+
+
+
+        if(indexOfDivideOperator != -1 && indexOfMultiplyOperator !=-1) {
+            if(indexOfDivideOperator > indexOfMultiplyOperator) {
+                firstOperation = "x";
+                indexOfOperator = indexOfMultiplyOperator;
+            } else {
+                firstOperation = "/";
+                indexOfOperator = indexOfDivideOperator;
+            }
+        } else if(indexOfDivideOperator != -1) {
+            firstOperation = "/";
+            indexOfOperator = indexOfDivideOperator;
+        } else {
+            firstOperation = "x";
+            indexOfOperator = indexOfMultiplyOperator;
+        }
+
+
 
         let numLeftItems = indexOfOperator;
         let lastLeftNum = "";
         let counter = 1;
 
-        //loop to collect all numbers to the left of the "x" operator into num1 variable
+        //loop to collect all numbers to the left of the operator into num1 variable
         while (numLeftItems > 0) {
             if(isNumber(equationArray[indexOfOperator - counter])) {
 
@@ -44,7 +60,7 @@ function multiplyEquation() {
         let lastRightNum = "";
         counter = 1;
 
-        //loop to collect all numbers to the right of the "x" operator into num2 variable
+        //loop to collect all numbers to the right of the operator into num2 variable
         while (numRightItems > 0) {
             if(isNumber(equationArray[indexOfOperator + counter])) {
 
@@ -56,32 +72,68 @@ function multiplyEquation() {
             numRightItems--;
         }
 
-        let product = (Math.round((num1 * num2) * 100) / 100).toString();
-        let numElementsToSplice = num1.length + 1 + num2.length;
-        equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...product);
+        
+        if (firstOperation == "/") {
+            let quotient = (Math.round((num1 / num2) * 100) / 100).toString();
+            let numElementsToSplice = num1.length + 1 + num2.length;
+            equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...quotient);
+    
+        } else {
+            let product = (Math.round((num1 * num2) * 100) / 100).toString();
+            let numElementsToSplice = num1.length + 1 + num2.length;
+            equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...product);
+    
+        }
 
         displayScreen.textContent = equationArray.join("");
     }
+
 }
 
-function divideEquation() {
+function addAndSubtract() {
+
     let equationArray = Array.from(displayScreen.textContent);
 
     let num1 = "";
     let num2 = "";
 
-    //collects left and right numbers on each side of EACH "/" operator, divides them, and inserts quotient back into equationArray.
-    while(equationArray.indexOf("/") != -1) {
+    //collects left and right numbers on each side of EACH operator, divides them, and inserts back into equationArray.
+    while(equationArray.indexOf("+") != -1 || equationArray.indexOf("-") !=-1) {
 
         num1 = "";
         num2 = "";
-        let indexOfOperator = equationArray.indexOf("/");
+        let indexOfOperator;
+
+        let indexOfAddOperator = equationArray.indexOf("+");
+        let indexOfSubtractOperator = equationArray.indexOf("-");
+
+        let firstOperation = "";
+
+
+
+        if(indexOfAddOperator != -1 && indexOfSubtractOperator !=-1) {
+            if(indexOfAddOperator > indexOfSubtractOperator) {
+                firstOperation = "-";
+                indexOfOperator = indexOfSubtractOperator;
+            } else {
+                firstOperation = "+";
+                indexOfOperator = indexOfAddOperator;
+            }
+        } else if(indexOfAddOperator != -1) {
+            firstOperation = "+";
+            indexOfOperator = indexOfAddOperator;
+        } else {
+            firstOperation = "-";
+            indexOfOperator = indexOfSubtractOperator;
+        }
+
+
 
         let numLeftItems = indexOfOperator;
         let lastLeftNum = "";
         let counter = 1;
 
-        //loop to collect all numbers to the left of the "/" operator into num1 variable
+        //loop to collect all numbers to the left of the operator into num1 variable
         while (numLeftItems > 0) {
             if(isNumber(equationArray[indexOfOperator - counter])) {
 
@@ -100,7 +152,7 @@ function divideEquation() {
         let lastRightNum = "";
         counter = 1;
 
-        //loop to collect all numbers to the right of the "/" operator into num2 variable
+        //loop to collect all numbers to the right of the  operator into num2 variable
         while (numRightItems > 0) {
             if(isNumber(equationArray[indexOfOperator + counter])) {
 
@@ -112,12 +164,22 @@ function divideEquation() {
             numRightItems--;
         }
 
-        let quotient = (Math.round((num1 / num2) * 100) / 100).toString();
-        let numElementsToSplice = num1.length + 1 + num2.length;
-        equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...quotient);
+        
+        if (firstOperation == "+") {
+            let sum = (Math.round((parseFloat(num1) + parseFloat(num2)) * 100) / 100).toString();
+            let numElementsToSplice = num1.length + 1 + num2.length;
+            equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...sum);
+    
+        } else {
+            let difference = (Math.round((num1 - num2) * 100) / 100).toString();
+            let numElementsToSplice = num1.length + 1 + num2.length;
+            equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...difference);
+    
+        }
 
         displayScreen.textContent = equationArray.join("");
     }
+
 }
 
 function operate(operator, num1, num2) {
@@ -204,8 +266,8 @@ function buttonClick(button) {
         if(buttonPressed == "=" && !screenIsEmpty) {
 
             // B E D M A S
-            divideEquation();
-            multiplyEquation();
+            divideAndMultiple();
+            addAndSubtract();
         }
 
     
