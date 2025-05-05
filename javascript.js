@@ -204,8 +204,12 @@ function buttonClick(button) {
             displayScreen.textContent = buttonPressed;
         }
 
-        if (buttonIsOperator && screenIsEmpty) {
+        if (buttonIsOperator && screenIsEmpty && buttonPressed != "-") {
             displayScreen.textContent = "0" + buttonPressed;
+        }
+
+        if (buttonPressed == "-" && screenIsEmpty) {
+            displayScreen.textContent = buttonPressed;
         }
 
         if (buttonPressed == "=" && screenIsEmpty) {
@@ -290,7 +294,21 @@ function validInput(buttonPressed) {
     if(!isScreenEmpty()) {
         let lastButtonPressed = displayScreen.textContent.charAt(displayScreen.textContent.length - 1);
 
-        if (isOperator(lastButtonPressed) && isOperator(buttonPressed)) {return false;} // cant have two operators beside each other
+        if (isOperator(lastButtonPressed) && isOperator(buttonPressed)) {
+            if(buttonPressed == "-") {
+                if(displayScreen.textContent.length >1) {
+                    // third last becasue 0--3 is valid. but 0---3 is not. so just check that theres not 3 operators in a row if using negative #.
+                    
+                    let thirdLastButtonPressed = displayScreen.textContent.charAt(displayScreen.textContent.length-2);
+
+                    if (isOperator(thirdLastButtonPressed)) {return false;} else {return true;}
+                } else {return false;}
+            }
+
+
+
+            return false;// cant have two operators beside each other
+        }
     
         if (lastButtonPressed == "." && buttonPressed == ".") {return false;} // cant have two decimals beside each other.
     
