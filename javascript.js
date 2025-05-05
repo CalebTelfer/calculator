@@ -182,29 +182,6 @@ function addAndSubtract() {
 
 }
 
-function operate(operator, num1, num2) {
-    switch (operator) {
-        case "+": {
-            add(num1, num2);
-            break;
-        }
-
-        case "-": {
-            subtract(num1, num2);
-            break;
-        }
-
-        case "*": {
-            multiply(num1, num2);
-            break;
-        }
-
-        case "/": {
-            divide(num1, num2);
-        }
-    }
-}
-
 const buttons = document.querySelectorAll("button");
 const displayScreen = document.querySelector("h2");
 
@@ -331,14 +308,4 @@ function validInput(buttonPressed) {
     }
 
     return true;
-}
-
-function findOperatorIndexes(equationArray, operatorRequested) {
-    return equationArray.reduce((operatorPos, currentItem, currentItemIndex) => {
-        if(currentItem == operatorRequested) {
-            operatorPos.push(currentItemIndex);
-        }
-        return operatorPos; //returns array of indexes in input array that has the operator requested
-    }, []);
-
 }
