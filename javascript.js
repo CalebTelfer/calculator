@@ -12,11 +12,61 @@ function multiply(x, y) {
     return x * y;
 }
 
-function divide(x, y) {
-    return x / y;
-}
+function divideEquation() {
+    let equationArray = Array.from(displayScreen.textContent);
 
-// 3.
+    let num1 = "";
+    let num2 = "";
+
+    //collects left and right numbers on each side of EACH "/" operator, divides them, and inserts quotient back into equationArray.
+    while(equationArray.indexOf("/") != -1) {
+
+        num1 = "";
+        num2 = "";
+        let indexOfOperator = equationArray.indexOf("/");
+
+        let numLeftItems = indexOfOperator;
+        let lastLeftNum = "";
+        let counter = 1;
+
+        //loop to collect all numbers to the left of the "/" operator into num1 variable
+        while (numLeftItems > 0) {
+            if(isNumber(equationArray[indexOfOperator - counter])) {
+
+                lastLeftNum = equationArray[indexOfOperator - counter];
+                num1 = lastLeftNum + num1;
+
+                lastleftNumIndex = indexOfOperator - counter;
+                counter++;
+
+            } else {break;}
+            numLeftItems--;
+        }
+
+
+        let numRightItems = equationArray.length - indexOfOperator - 1;
+        let lastRightNum = "";
+        counter = 1;
+
+        //loop to collect all numbers to the right of the "/" operator into num2 variable
+        while (numRightItems > 0) {
+            if(isNumber(equationArray[indexOfOperator + counter])) {
+
+                lastRightNum = equationArray[indexOfOperator + counter];
+                num2 = num2 + lastRightNum;
+                counter++;
+
+            } else {break;}
+            numRightItems--;
+        }
+
+        let quotient = (Math.round((num1 / num2) * 100) / 100).toString();
+        let numElementsToSplice = num1.length + 1 + num2.length;
+        equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...quotient);
+
+        displayScreen.textContent = equationArray.join("");
+    }
+}
 
 function operate(operator, num1, num2) {
     switch (operator) {
@@ -100,14 +150,9 @@ function buttonClick(button) {
 
 
         if(buttonPressed == "=" && !screenIsEmpty) {
-            let equationArray = Array.from(displayScreen.textContent);
-            
-            //find operator positions for bedmas
-            let dividePositions = findOperatorIndexes(equationArray, "/");
-            let multiplyPositions = findOperatorIndexes(equationArray, "x");
-            let addPositions = findOperatorIndexes(equationArray, "+");
-            let subtractPositions = findOperatorIndexes(equationArray, "-");
 
+            // B E D M A S
+            divideEquation();
         }
 
     
@@ -118,7 +163,7 @@ function buttonClick(button) {
 
 function isNumber(buttonPressed) {
     if(
-        buttonPressed != "." &&
+        //buttonPressed != "." &&   //decimals should be considered numbers since its part of the number. validInput() ensures its entered right.
         buttonPressed != "=" &&
         buttonPressed != "+" &&
         buttonPressed != "-" &&
@@ -131,7 +176,6 @@ function isNumber(buttonPressed) {
 
 function isOperator(buttonPressed) {
     if(
-        buttonPressed == "." || 
         buttonPressed == "=" || 
         buttonPressed == "+" ||
         buttonPressed == "-" ||
