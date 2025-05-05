@@ -8,8 +8,60 @@ function subtract(x, y) {
     return x - y;
 }
 
-function multiply(x, y) {
-    return x * y;
+function multiplyEquation() {
+    let equationArray = Array.from(displayScreen.textContent);
+
+    let num1 = "";
+    let num2 = "";
+
+    //collects left and right numbers on each side of EACH "x" operator, divides them, and inserts quotient back into equationArray.
+    while(equationArray.indexOf("x") != -1) {
+
+        num1 = "";
+        num2 = "";
+        let indexOfOperator = equationArray.indexOf("x");
+
+        let numLeftItems = indexOfOperator;
+        let lastLeftNum = "";
+        let counter = 1;
+
+        //loop to collect all numbers to the left of the "x" operator into num1 variable
+        while (numLeftItems > 0) {
+            if(isNumber(equationArray[indexOfOperator - counter])) {
+
+                lastLeftNum = equationArray[indexOfOperator - counter];
+                num1 = lastLeftNum + num1;
+
+                lastleftNumIndex = indexOfOperator - counter;
+                counter++;
+
+            } else {break;}
+            numLeftItems--;
+        }
+
+
+        let numRightItems = equationArray.length - indexOfOperator - 1;
+        let lastRightNum = "";
+        counter = 1;
+
+        //loop to collect all numbers to the right of the "x" operator into num2 variable
+        while (numRightItems > 0) {
+            if(isNumber(equationArray[indexOfOperator + counter])) {
+
+                lastRightNum = equationArray[indexOfOperator + counter];
+                num2 = num2 + lastRightNum;
+                counter++;
+
+            } else {break;}
+            numRightItems--;
+        }
+
+        let product = (Math.round((num1 * num2) * 100) / 100).toString();
+        let numElementsToSplice = num1.length + 1 + num2.length;
+        equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...product);
+
+        displayScreen.textContent = equationArray.join("");
+    }
 }
 
 function divideEquation() {
@@ -153,6 +205,7 @@ function buttonClick(button) {
 
             // B E D M A S
             divideEquation();
+            multiplyEquation();
         }
 
     
