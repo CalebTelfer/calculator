@@ -43,12 +43,18 @@ function divideAndMultiple() {
 
         //loop to collect all numbers to the left of the operator into num1 variable
         while (numLeftItems > 0) {
-            if(isNumber(equationArray[indexOfOperator - counter])) {
+            let item = equationArray[indexOfOperator - counter];
+            let previousItem = equationArray[indexOfOperator - counter + 1];
 
+            if(isNumber(item) || item == "-") {
+                if(counter != 1 && item == "-") {
+                    if(isOperator(previousItem)) { //if not first item checked. check if previous is an operator
+                        break;
+                    }
+                }
                 lastLeftNum = equationArray[indexOfOperator - counter];
                 num1 = lastLeftNum + num1;
 
-                lastleftNumIndex = indexOfOperator - counter;
                 counter++;
 
             } else {break;}
@@ -62,7 +68,14 @@ function divideAndMultiple() {
 
         //loop to collect all numbers to the right of the operator into num2 variable
         while (numRightItems > 0) {
-            if(isNumber(equationArray[indexOfOperator + counter])) {
+            let item = equationArray[indexOfOperator + counter];
+            let nextItem = equationArray[indexOfOperator + counter + 1];
+
+            if(isNumber(item) || item == "-") {
+                
+                if(item == "-" && isOperator(nextItem)) {
+                    break;
+                }
 
                 lastRightNum = equationArray[indexOfOperator + counter];
                 num2 = num2 + lastRightNum;
@@ -72,19 +85,18 @@ function divideAndMultiple() {
             numRightItems--;
         }
 
-        
         if (firstOperation == "/") {
-            let quotient = (Math.round((num1 / num2) * 100) / 100).toString();
+            let quotient = (Math.round((Number(num1) / Number(num2)) * 100) / 100).toString();
             let numElementsToSplice = num1.length + 1 + num2.length;
             equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...quotient);
     
         } else {
-            let product = (Math.round((num1 * num2) * 100) / 100).toString();
+            let product = (Math.round((Number(num1) * Number(num2)) * 100) / 100).toString();
             let numElementsToSplice = num1.length + 1 + num2.length;
             equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...product);
     
         }
-
+        
         displayScreen.textContent = equationArray.join("");
     }
 
@@ -248,7 +260,7 @@ function buttonClick(button) {
 
             // B E D M A S
             divideAndMultiple();
-            addAndSubtract();
+            //addAndSubtract();
         }
 
     
