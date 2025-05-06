@@ -45,10 +45,11 @@ function divideAndMultiple() {
         while (numLeftItems > 0) {
             let item = equationArray[indexOfOperator - counter];
             let previousItem = equationArray[indexOfOperator - counter + 1];
+            let nextItem = equationArray[indexOfOperator - counter - 1];
 
             if(isNumber(item) || item == "-") {
-                if(counter != 1 && item == "-") {
-                    if(isOperator(previousItem)) { //if not first item checked. check if previous is an operator
+                if(counter != 1 && item == "-" && nextItem != undefined) {
+                    if(isOperator(previousItem) || isNumber(nextItem)) { //if not first item checked. check if previous is an operator
                         break;
                     }
                 }
@@ -70,10 +71,12 @@ function divideAndMultiple() {
         while (numRightItems > 0) {
             let item = equationArray[indexOfOperator + counter];
             let nextItem = equationArray[indexOfOperator + counter + 1];
+            let previousItem = equationArray[indexOfOperator + counter - 1];
 
             if(isNumber(item) || item == "-") {
                 
-                if(item == "-" && isOperator(nextItem)) {
+                if(item == "-") {
+                    if (isOperator(nextItem) || isNumber(previousItem))
                     break;
                 }
 
@@ -86,17 +89,17 @@ function divideAndMultiple() {
         }
 
         if (firstOperation == "/") {
-            let quotient = (Math.round((Number(num1) / Number(num2)) * 100) / 100).toString();
+            let quotient = (Math.round((parseFloat(num1) / parseFloat(num2)) * 100) / 100).toString();
             let numElementsToSplice = num1.length + 1 + num2.length;
             equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...quotient);
     
         } else {
-            let product = (Math.round((Number(num1) * Number(num2)) * 100) / 100).toString();
+            let product = (Math.round((parseFloat(num1) * parseFloat(num2)) * 100) / 100).toString();
             let numElementsToSplice = num1.length + 1 + num2.length;
             equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...product);
-    
+
         }
-        
+
         displayScreen.textContent = equationArray.join("");
     }
 
@@ -110,14 +113,14 @@ function addAndSubtract() {
     let num2 = "";
 
     //collects left and right numbers on each side of EACH operator, divides them, and inserts back into equationArray.
-    while(equationArray.indexOf("+") != -1 || equationArray.indexOf("-") !=-1) {
+    while(equationArray.indexOf("+") != -1 || hasSubtraction(equationArray)) {
 
         num1 = "";
         num2 = "";
         let indexOfOperator;
 
         let indexOfAddOperator = equationArray.indexOf("+");
-        let indexOfSubtractOperator = equationArray.indexOf("-");
+        let indexOfSubtractOperator = firstSubtractOperator(equationArray); // -1 if none.
 
         let firstOperation = "";
 
@@ -147,12 +150,19 @@ function addAndSubtract() {
 
         //loop to collect all numbers to the left of the operator into num1 variable
         while (numLeftItems > 0) {
-            if(isNumber(equationArray[indexOfOperator - counter])) {
+            let item = equationArray[indexOfOperator - counter];
+            let previousItem = equationArray[indexOfOperator - counter + 1];
+            let nextItem = equationArray[indexOfOperator - counter - 1];
 
+            if(isNumber(item) || item == "-") {
+                if(counter != 1 && item == "-" && nextItem != undefined) {
+                    if(isOperator(previousItem) || isNumber(nextItem)) { //if not first item checked. check if previous is an operator
+                        break;
+                    }
+                }
                 lastLeftNum = equationArray[indexOfOperator - counter];
                 num1 = lastLeftNum + num1;
 
-                lastleftNumIndex = indexOfOperator - counter;
                 counter++;
 
             } else {break;}
@@ -164,9 +174,18 @@ function addAndSubtract() {
         let lastRightNum = "";
         counter = 1;
 
-        //loop to collect all numbers to the right of the  operator into num2 variable
+        //loop to collect all numbers to the right of the operator into num2 variable
         while (numRightItems > 0) {
-            if(isNumber(equationArray[indexOfOperator + counter])) {
+            let item = equationArray[indexOfOperator + counter];
+            let nextItem = equationArray[indexOfOperator + counter + 1];
+            let previousItem = equationArray[indexOfOperator + counter - 1];
+
+            if(isNumber(item) || item == "-") {
+
+                if(item == "-") {
+                    if (isOperator(nextItem) || isNumber(previousItem))
+                    break;
+                }
 
                 lastRightNum = equationArray[indexOfOperator + counter];
                 num2 = num2 + lastRightNum;
@@ -175,7 +194,6 @@ function addAndSubtract() {
             } else {break;}
             numRightItems--;
         }
-
         
         if (firstOperation == "+") {
             let sum = (Math.round((parseFloat(num1) + parseFloat(num2)) * 100) / 100).toString();
@@ -183,7 +201,7 @@ function addAndSubtract() {
             equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...sum);
     
         } else {
-            let difference = (Math.round((num1 - num2) * 100) / 100).toString();
+            let difference = (Math.round((parseFloat(num1) - parseFloat(num2)) * 100) / 100).toString();
             let numElementsToSplice = num1.length + 1 + num2.length;
             equationArray.splice(indexOfOperator - num1.length, numElementsToSplice, ...difference);
     
@@ -260,7 +278,7 @@ function buttonClick(button) {
 
             // B E D M A S
             divideAndMultiple();
-            //addAndSubtract();
+            addAndSubtract();
         }
 
     
@@ -338,4 +356,40 @@ function validInput(buttonPressed) {
     }
 
     return true;
+}
+
+function hasSubtraction(equationArray) {
+    if(equationArray.length > 2 && equationArray.indexOf("-") != -1) {
+
+        for (let i = 0; i < equationArray.length; i ++) {
+            if(i!= 0 && equationArray[i] == "-") {
+                if (!isOperator(equationArray[i - 1])) {
+                    return true;
+                }
+
+            }
+
+        }
+
+        return false;
+
+    }
+}
+
+function firstSubtractOperator(equationArray) {
+    if(equationArray.length > 2 && equationArray.indexOf("-") != -1) {
+
+        for (let i = 0; i < equationArray.length; i ++) {
+            if(i!= 0 && equationArray[i] == "-") {
+                if (!isOperator(equationArray[i - 1])) {
+                    return i;
+                }
+
+            }
+
+        }
+
+        return -1;
+
+    }
 }
