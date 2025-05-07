@@ -1,3 +1,76 @@
+
+
+// ------------------EVENT LISTENERS-----------------------
+const buttons = document.querySelectorAll("button");
+const displayScreen = document.querySelector("h2");
+
+
+buttons.forEach(button => {
+    button.addEventListener("click", function() {buttonClick(button);}
+)})
+
+// --------------------------------------------------------
+
+
+// ------------HANDLE BUTTON CLICKS-------------------
+function buttonClick(button) {
+    let buttonPressed = button.textContent;
+
+    let buttonIsNumber = isNumber(buttonPressed);
+    let buttonIsOperator = isOperator(buttonPressed);
+    let screenIsEmpty = isScreenEmpty();
+
+    if(validInput(buttonPressed)) {
+
+    //---------BUTTON PRESS ON EMPTY SCREEN-----------
+        if (buttonIsNumber && screenIsEmpty) {
+            displayScreen.textContent = buttonPressed;
+        }
+
+        if (buttonIsOperator && screenIsEmpty && buttonPressed != "-") {
+            displayScreen.textContent = "0" + buttonPressed;
+        }
+
+        if (buttonPressed == "-" && screenIsEmpty) {
+            displayScreen.textContent = buttonPressed;
+        }
+
+        if (buttonPressed == "=" && screenIsEmpty) {
+            displayScreen.textContent = "0";
+        }
+
+        if (buttonPressed == "DEL" && screenIsEmpty) {
+            displayScreen.textContent = "0";
+        }
+
+        if (buttonPressed == "." && screenIsEmpty) {
+            displayScreen.textContent = buttonPressed;
+        }
+
+    //-------------BUTTON PRESS ON SCREEN WITH DATA-----------------------
+        if (buttonIsNumber && !screenIsEmpty) {
+            displayScreen.textContent = displayScreen.textContent + buttonPressed;
+        }
+
+        if (buttonIsOperator && !screenIsEmpty && buttonPressed != "=") {
+            displayScreen.textContent = displayScreen.textContent + buttonPressed;
+        }
+
+        if (buttonPressed == "DEL" && !screenIsEmpty) {
+            displayScreen.textContent = displayScreen.textContent.slice(0, -1);
+        }
+
+        if(buttonPressed == "=" && !screenIsEmpty) {
+
+            // B E D M A S
+            divideAndMultiple();
+            addAndSubtract();
+        }
+
+    } else {displayScreen.textContent = "ERROR";} // if check for valid input failed.
+}
+
+
 function divideAndMultiple() {
 
     let equationArray = Array.from(displayScreen.textContent);
@@ -5,7 +78,7 @@ function divideAndMultiple() {
     let num1 = "";
     let num2 = "";
 
-    //collects left and right numbers on each side of EACH operator, divides them, and inserts back into equationArray.
+    //collects left and right numbers on each side of EACH operator, operates on them, and inserts back into equationArray.
     while(equationArray.indexOf("/") != -1 || equationArray.indexOf("x") != -1) {
 
         num1 = "";
@@ -210,81 +283,6 @@ function addAndSubtract() {
         displayScreen.textContent = equationArray.join("");
     }
 
-}
-
-const buttons = document.querySelectorAll("button");
-const displayScreen = document.querySelector("h2");
-
-
-buttons.forEach(button => {
-    button.addEventListener("click", function() {buttonClick(button);}
-)})
-
-function buttonClick(button) {
-    let buttonPressed = button.textContent;
-
-    let buttonIsNumber = isNumber(buttonPressed);
-    let buttonIsOperator = isOperator(buttonPressed);
-    let screenIsEmpty = isScreenEmpty();
-
-    if(validInput(buttonPressed)) {
-
-    //handle pressing button on empty screen.
-        if (buttonIsNumber && screenIsEmpty) {
-            displayScreen.textContent = buttonPressed;
-        }
-
-        if (buttonIsOperator && screenIsEmpty && buttonPressed != "-") {
-            displayScreen.textContent = "0" + buttonPressed;
-        }
-
-        if (buttonPressed == "-" && screenIsEmpty) {
-            displayScreen.textContent = buttonPressed;
-        }
-
-        if (buttonPressed == "=" && screenIsEmpty) {
-            displayScreen.textContent = "0";
-        }
-
-        if (buttonPressed == "DEL" && screenIsEmpty) {
-            displayScreen.textContent = "0";
-        }
-
-        if (buttonPressed == "." && screenIsEmpty) {
-            displayScreen.textContent = buttonPressed;
-        }
-
-
-
-
-        
-
-
-    //handle screen has numbers / operators pressed already
-        if (buttonIsNumber && !screenIsEmpty) {
-            displayScreen.textContent = displayScreen.textContent + buttonPressed;
-        }
-
-        if (buttonIsOperator && !screenIsEmpty && buttonPressed != "=") {
-            displayScreen.textContent = displayScreen.textContent + buttonPressed;
-        }
-
-        if (buttonPressed == "DEL" && !screenIsEmpty) {
-            displayScreen.textContent = displayScreen.textContent.slice(0, -1);
-        }
-
-
-        if(buttonPressed == "=" && !screenIsEmpty) {
-
-            // B E D M A S
-            divideAndMultiple();
-            addAndSubtract();
-        }
-
-    
-
-
-    } else {displayScreen.textContent = "ERROR";} // if check for valid input failed.
 }
 
 function isNumber(buttonPressed) {
